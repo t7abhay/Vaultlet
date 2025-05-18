@@ -1,8 +1,8 @@
 package service
 
 import (
+	"crypto"
 	crand "crypto/rand"
-	"crypto/sha256"
 	"encoding/hex"
 	"io"
 	"math/rand"
@@ -11,25 +11,31 @@ import (
 )
 
 func ApiKeyGenerator() (string, error) {
-	randomBytes := make([]byte, 32)
+	randomBytes := make([]byte, 256)
+
+	channel := make(chan string)
 
 	_, err := io.ReadFull(crand.Reader, randomBytes)
 	if err != nil {
 		return "", err
 	}
 
-	hash := sha256.Sum256(randomBytes)
+	hasher := crypto.SHA512.New()
+	hasher.Write(randomBytes)
+	digest := hasher.Sum(nil)
 
-	preApiKey := hex.EncodeToString(hash[:])
+	preApiKey := hex.EncodeToString(digest)
 
-	apiKey := characterChanger(preApiKey)
+	go characterChanger(preApiKey, channel)
+	apiKey := <-channel
 
 	return apiKey, nil
 }
 
-func characterChanger(preApiKey string) string {
+func characterChanger(preApiKey string, channel chan string) {
 	apiRune := []rune(preApiKey)
-	rand.NewSource(time.Now().UnixNano())
+	rand := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	randomItterLen := rand.Intn(len(apiRune)) - 1
 
 	for idx := range randomItterLen {
@@ -42,12 +48,12 @@ func characterChanger(preApiKey string) string {
 	symbols := []rune{'-', '_'}
 	insertCount := rand.Intn(3) + 2
 
-	for idx := 0; idx < insertCount; idx++ {
+	for range insertCount {
 		symbol := symbols[rand.Intn(len(symbols))]
 		position := rand.Intn(len(apiRune))
 		apiRune = append(apiRune[:position], append([]rune{symbol}, apiRune[position:]...)...)
 	}
 
-	return string(apiRune)
+	channel <- string(apiRune)
 
 }
