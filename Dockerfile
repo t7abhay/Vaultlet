@@ -7,7 +7,9 @@ RUN go mod download
 
 COPY . .
 
+
 RUN go build -o vaultlet ./cmd/Vaultlet
+
 
 FROM debian:bookworm-slim
 
