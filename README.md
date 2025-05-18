@@ -18,7 +18,7 @@
 
 #### Requirements
 
-- [Go 1.22 or above](https://go.dev/)
+- [Go 1.24 or above](https://go.dev/)
 - [A SQL database](https://letmegooglethat.com/?q=list+of+sql+database)
 - [Client application (for testing)](https://http.cat/status/102)
 
