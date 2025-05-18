@@ -11,7 +11,7 @@
 > [WorkFlow & Much more](https://app.eraser.io/workspace/WZJMUDnUQLRQWyRQK2G0?origin=share)
 
 
->[!NOTE]
+> [!NOTE]
 - Populate env file with creds
 ---
 
@@ -27,6 +27,8 @@ git clone https://github.com/t7abhay/Vaultlet
 
 cp .env_sample .env
 ```
+> [!TIP]
+> Optional information to help a user be more successful.
 
 
 ---
